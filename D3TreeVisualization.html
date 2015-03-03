@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang='en' xml:lang='en' xmlns='http://www.w3.org/1999/xhtml'>
+  <head>
+    <meta content='text/html;charset=UTF-8' http-equiv='content-type'>
+    <title>Right-angle phylograms and dendrograms with d3</title>
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
+    <script src="http://d3js.org/d3.v3.min.js" type="text/javascript"></script>
+    <script src="js/newick.js" type="text/javascript"></script>
+    <script src="js/d3.phylogram.js" type="text/javascript"></script>
+    <script src="js/NMLd3Phylogeny.js" type="text/javascript"></script>
+    <script src="js/papaparse.min.js" type="text/javascript"></script>
+    <script>
+      $(document).ready(function(){
+    	$("#metaInput").change(loadMeta);
+    	$("#newickFile").change(loadNewick);
+    	$("#provinceLegend").hide();
+      });
+    </script>
+    <script>
+    var clicked = false, clickY;
+    $(document).on({
+        'mousemove': function(e) {
+            clicked && updateScrollPos(e);
+        },
+        'mousedown': function(e) {
+            clicked = true;
+            clickY = e.pageY;
+        },
+        'mouseup': function() {
+            clicked = false;
+            $('html').css('cursor', 'auto');
+        }
+    });
+
+    var updateScrollPos = function(e) {
+        $('html').css('cursor', 'row-resize');
+        $(window).scrollTop($(window).scrollTop() + (clickY - e.pageY));
+    }     
+    </script>
+    <style type="text/css" media="screen">
+      body { font-family: "Helvetica Neue", Helvetica, sans-serif; }
+      td { vertical-align: top; }
+      .locationTimeBar{
+      	position: absolute;
+      	left: 0%;
+      	backgroundColor: red;
+      }
+      #collectionDateLabel{
+      	position: absolute;
+      	left: 50%;
+      }
+      #bcLegend{
+      	font-color: blue;
+      }
+      #provinceLegend{
+      	position: absolute;
+      	left: 45%;
+      	top: 20%;
+      	width: '100px';
+      }
+    </style>
+  </head>
+  <body>
+  <input id="newickFile" type="file" name="trees"/>
+  <input id="metaInput" type="file" name="files"/>
+  <!-- <button id="addLines" onclick='removeContrast()'>Remove contrast lines</button> -->
+    <table>
+      <tr>
+        <td>
+          <h2><label>Phylogram</label><label id='collectionDateLabel'>Collection Date</label></h2>
+          <div id='phylogram'></div>
+        </td>
+      </tr>
+    </table>
+    <div id="provinceLegend" style={"left:80%"}>
+    	<div style="color:green">BC<svg height="15" width="15"><circle cx="8" cy="4" r="4" stroke="black" stroke-width="0px" fill="green"/></svg></div>
+    	<div style="color:orange">AB<svg height="15" width="15"><circle cx="8" cy="4" r="4" stroke="black" stroke-width="0px" fill="orange"/></svg></div>
+    	<div style="color:black">SK<svg height="15" width="15"><circle cx="8" cy="4" r="4" stroke="black" stroke-width="0px" fill="black"/></svg></div>
+    	<div style="color:#336666">MB<svg height="15" width="15"><circle cx="8" cy="4" r="4" stroke="black" stroke-width="0px" fill="#336666"/></svg></div>
+    	<div style="color:red">ON<svg height="15" width="15"><circle cx="8" cy="4" r="4" stroke="black" stroke-width="0px" fill="red"/></svg></div>
+    	<div style="color:blue">QC<svg height="15" width="15"><circle cx="8" cy="4" r="4" stroke="black" stroke-width="0px" fill="blue"/></svg></div>
+    	<div style="color:purple">NS<svg height="15" width="15"><circle cx="8" cy="4" r="4" stroke="black" stroke-width="0px" fill="purple"/></svg></div>
+    	<div style="color:darkolivegreen">NB<svg height="15" width="15"><circle cx="8" cy="4" r="4" stroke="black" stroke-width="0px" fill="darkolivegreen"/></svg></div>
+    	<div style="color:pink">NF<svg height="15" width="15"><circle cx="8" cy="4" r="4" stroke="black" stroke-width="0px" fill="pink"/></svg></div>
+    	<div style="color:aqua">NWT<svg height="15" width="15"><circle cx="8" cy="4" r="4" stroke="black" stroke-width="0px" fill="aqua"/></svg></div>
+    	<div style="color:goldenrod">YU<svg height="15" width="15"><circle cx="8" cy="4" r="4" stroke="black" stroke-width="0px" fill="goldenrod"/></svg></div>
+    	<div style="color:#FF3399">NU<svg height="15" width="15"><circle cx="8" cy="4" r="4" stroke="black" stroke-width="0px" fill="#FF3399"/></svg></div>
+    	<div style="color:brown">PEI<svg height="15" width="15"><circle cx="8" cy="4" r="4" stroke="black" stroke-width="0px" fill="brown"/></svg></div>
+    	<div style="color:yellowGreen">N/A<svg height="15" width="15"><circle cx="8" cy="4" r="4" stroke="black" stroke-width="0px" fill="yellowGreen"/></svg></div>
+    </div>
+  </body>
+</html>
