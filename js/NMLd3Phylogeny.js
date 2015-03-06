@@ -1,3 +1,6 @@
+var minCollectionDate;
+var maxCollectionDate;
+
 //Function to load the newick file from disk and begin building the phylogenetic tree
 function loadNewick(evt){
 	var data;
@@ -8,6 +11,23 @@ function loadNewick(evt){
  		buildTree(reader.result);
  	}
  	var text = reader.readAsText(file);
+}
+
+//function to move the DOM element requested
+function moveData(direction, amount, element){
+	if(direction=='left'){
+		var original = $().attr('left');
+		original = original + amount;
+		$(element).css('left', original);
+	}
+	else if(direction=='right'){
+		var original = $().attr('right');
+		original = original + amount;
+		$(element).css('right', original);
+	}
+	else{
+		alert("Unable to move the element.");
+	}
 }
 
 //handles the input of meta data to compliment the phylogenetic tree.
@@ -54,6 +74,7 @@ function alterInnerNodeText(){
 	while(innerNodes[x]){
 		var node = innerNodes[x].childNodes[0];
 		$(node).attr('fill', '#000');
+		$(node).attr('font-size', '12px');
 		x++;
 	}
 }
@@ -63,8 +84,8 @@ function add_location_and_timeline_column(data){
 	//grab all of the leaf nodes in the current tree and append the appropriate column describing the nodes sampling province and date
 	var leafNodes = document.getElementsByClassName("leaf node");
 	var x =0;
-	var minCollectionDate = findMinDate(data);
-	var maxCollectionDate = findMaxDate(data);
+	minCollectionDate = findMinDate(data);
+	maxCollectionDate = findMaxDate(data);
 	var totalDays = daydiff(minCollectionDate, maxCollectionDate);
 	
 	while(leafNodes[x]){
@@ -88,7 +109,7 @@ function add_location_and_timeline_column(data){
 				$(newdiv).css('height', '12px');
 				$(newdiv).css('z-index', '4');
 				$(newdiv).append(" ");
-				$("body").append(newdiv);
+				$("#collectionDate").append(newdiv);
 				
 				//change the node circles to reflect the province fof origin
 				$(leafNodes[x].childNodes[0]).attr('fill', determineProvince(data[y].Province));
@@ -110,10 +131,10 @@ function add_location_and_timeline_column(data){
 			$(newdiv3).css('left', '50%');
 			$(newdiv3).css('width', '20px');
 			$(newdiv3).css('height', '15px');
-			//$(newdiv3).css('z-index', '4');
+			$(newdiv3).css('z-index', '4');
 			$(newdiv3).css('font-size', '8px');
 			$(newdiv3).append("N/A");
-			$("body").append(newdiv3);
+			$("#collectionDate").append(newdiv3);
 		}
 		
 		//add lines that will facilitate lining meta data up with phylo tree
@@ -129,20 +150,14 @@ function add_location_and_timeline_column(data){
 			$(newdiv2).css('left', '0px');
 			$(newdiv2).css('width', '100%');
 			$(newdiv2).css('height', '4px');
-			//$(newdiv2).css('z-index', '2');
+			$(newdiv2).css('z-index', '2');
 			$(newdiv2).addClass('contrastLine');
 			$(newdiv2).append(" ");
-			$("body").append(newdiv2);
+			$("#collectionDate").append(newdiv2);
 		}
 		
 		x++;
 	}
-	console.log(leafNodes.child[1].value);
-}
-
-//Add the column containing the source information for the tree
-function add_source_column(data){
-	
 }
 
 //switches graph from default branch length based depiction to a dendrogram layout
@@ -239,6 +254,7 @@ function findMaxDate(data){
 		}
 		x++;
 	}
+	
 	return date;
 }
 
@@ -250,4 +266,18 @@ function daydiff(first, second) {
 //remove the contrast lines from the view
 function removeContrast(){
 	$(".contrastLine").remove();
+}
+
+//explanation for the source of the data:
+function sourceExplanation(){
+	var text = "The provincial source of each isolate is described by the fill color for each leaf node on the tree.  Isolates that lack meta data are colored greenYellow.";
+	alert(text);
+}
+
+//explanation for the collection date bar:
+function collectionDateExplanation(){
+	var text = "Each bar represents the time of sampling for the associated isolate on the tree.  The range of dates is as follows:\n" +
+			"\t Minimum date: Date of earliest sample from group (smallest bar) => "+minCollectionDate+"\n" +
+			"\t Max date: Date of latest sampling from group (largest bar) => "+maxCollectionDate;
+	alert(text);
 }
