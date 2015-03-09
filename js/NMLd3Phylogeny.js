@@ -41,6 +41,7 @@ function loadMeta(evt) {
         $("#provinceLegend").show();
         //add the meta data to the side of the tree
         add_location_and_timeline_column(data);
+        //$("#collectionDate").css('left', '50%');
       }
     });
   } 
