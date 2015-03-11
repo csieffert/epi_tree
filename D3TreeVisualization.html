@@ -40,6 +40,7 @@
       #collectionDate{
 		position: absolute;
 		top: 0;
+		left: 0;
       }
       #collectionDateLabelBar{
 		backgroundColor: #66FFFF;
@@ -50,15 +51,20 @@
       }
       #collectionDate-firstSample{
       	position: absolute;
-      	left: 0;
+      	width: 50px;
+      	left: 150px;
       }
       #collectionDate-lastSample{
       	position: absolute;
-      	right: 0;
+      	left: 400px;
       }
       #collectionDateHeader{
       	position: relative;
       	width: 100%;
+      }
+      #spacer{
+      	position: relative;
+      	width: 300px;
       }
     </style>
   </head>
@@ -73,7 +79,7 @@
           <div id='phylogram'></div>
           <div id='collectionDate'>
           	<div id="collectionDate-header">
-          		<label id="collectionDate-firstSample">First Sample</label><label id="collectionDate-lastSample">Last Sample</br></label>
+          		<label id="collectionDate-firstSample"></label><div id="spacer"></div><label id="collectionDate-lastSample"></label>
           	</div>
           </div>
         </td>

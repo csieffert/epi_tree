@@ -73,6 +73,12 @@ function add_location_and_timeline_column(data){
 	var x =0;
 	minCollectionDate = findMinDate(data);
 	maxCollectionDate = findMaxDate(data);
+	
+	var minParsed = minCollectionDate.toDateString().split(' ');
+	var maxParsed = maxCollectionDate.toDateString().split(' ');
+	$("#collectionDate-firstSample").append(minParsed[1]+" "+minParsed[3]);
+	$("#collectionDate-lastSample").append(maxParsed[1]+" "+maxParsed[3]);
+
 	var totalDays = daydiff(minCollectionDate, maxCollectionDate);
 	while(leafNodes[x]){
 		var node = leafNodes[x].childNodes[1];
