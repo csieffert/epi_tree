@@ -17,13 +17,10 @@
     	$("#newickFile").change(loadNewick);
     	$("#provinceLegend").draggable();
     	$("#collectionDate").draggable({ axis: "x" });
-    	$("#collectionDate").css('background-color', 'blue');
     	$("#provinceLegend").hide();
       });
     </script>
-    <script>
 
-    </script>
     <style type="text/css" media="screen">
       body { font-family: "Helvetica Neue", Helvetica, sans-serif; }
       td { vertical-align: top; }
@@ -51,6 +48,18 @@
 		height: 12px;
 		z-index: 4;
       }
+      #collectionDate-firstSample{
+      	position: absolute;
+      	left: 0;
+      }
+      #collectionDate-lastSample{
+      	position: absolute;
+      	right: 0;
+      }
+      #collectionDateHeader{
+      	position: relative;
+      	width: 100%;
+      }
     </style>
   </head>
   <body>
@@ -58,34 +67,42 @@
   <input id="newickFile" type="file" name="trees"/></br>
   <label>Input meta data (.csv):</label>
   <input id="metaInput" type="file" name="files"/>
-  <!-- <button id="addLines" onclick='removeContrast()'>Remove contrast lines</button> -->
     <table>
       <tr>
         <td>
           <div id='phylogram'></div>
-          <div id='collectionDate'></div>
+          <div id='collectionDate'>
+          	<div id="collectionDate-header">
+          		<label id="collectionDate-firstSample">First Sample</label><label id="collectionDate-lastSample">Last Sample</br></label>
+          	</div>
+          </div>
         </td>
       </tr>
     </table>
     <table>
     <div id="provinceLegend" style={"left:80%"}>
-    	<label>Source<button onclick='sourceExplanation()'>?</button></label>
-    	<div style="color:green">BC<svg height="15" width="15"><circle cx="8" cy="4" r="4" stroke="black" stroke-width="0px" fill="green"/></svg></div>
-    	<div style="color:orange">AB<svg height="15" width="15"><circle cx="8" cy="4" r="4" stroke="black" stroke-width="0px" fill="orange"/></svg></div>
-    	<div style="color:black">SK<svg height="15" width="15"><circle cx="8" cy="4" r="4" stroke="black" stroke-width="0px" fill="black"/></svg></div>
-    	<div style="color:#336666">MB<svg height="15" width="15"><circle cx="8" cy="4" r="4" stroke="black" stroke-width="0px" fill="#336666"/></svg></div>
-    	<div style="color:red">ON<svg height="15" width="15"><circle cx="8" cy="4" r="4" stroke="black" stroke-width="0px" fill="red"/></svg></div>
-    	<div style="color:blue">QC<svg height="15" width="15"><circle cx="8" cy="4" r="4" stroke="black" stroke-width="0px" fill="blue"/></svg></div>
-    	<div style="color:purple">NS<svg height="15" width="15"><circle cx="8" cy="4" r="4" stroke="black" stroke-width="0px" fill="purple"/></svg></div>
-    	<div style="color:darkolivegreen">NB<svg height="15" width="15"><circle cx="8" cy="4" r="4" stroke="black" stroke-width="0px" fill="darkolivegreen"/></svg></div>
-    	<div style="color:pink">NF<svg height="15" width="15"><circle cx="8" cy="4" r="4" stroke="black" stroke-width="0px" fill="pink"/></svg></div>
-    	<div style="color:aqua">NWT<svg height="15" width="15"><circle cx="8" cy="4" r="4" stroke="black" stroke-width="0px" fill="aqua"/></svg></div>
-    	<div style="color:goldenrod">YU<svg height="15" width="15"><circle cx="8" cy="4" r="4" stroke="black" stroke-width="0px" fill="goldenrod"/></svg></div>
-    	<div style="color:#FF3399">NU<svg height="15" width="15"><circle cx="8" cy="4" r="4" stroke="black" stroke-width="0px" fill="#FF3399"/></svg></div>
-    	<div style="color:brown">PEI<svg height="15" width="15"><circle cx="8" cy="4" r="4" stroke="black" stroke-width="0px" fill="brown"/></svg></div>
-    	<div style="color:greenYellow">N/A<svg height="15" width="15"><circle cx="8" cy="4" r="4" stroke="black" stroke-width="0px" fill="greenYellow"/></svg></div>
-    	<label>Collection Date<button onclick="collectionDateExplanation()">?</button></label>
+    	<label>Source Province<button onclick='sourceExplanation()'>?</button></label>
+    	<div style="color:green">BC</div>
+    	<div style="color:orange">AB</div>
+    	<div style="color:black">SK</div>
+    	<div style="color:#336666">MB</div>
+    	<div style="color:red">ON</div>
+    	<div style="color:blue">QC</div>
+    	<div style="color:purple">NS</div>
+    	<div style="color:darkolivegreen">NB</div>
+    	<div style="color:pink">NF</div>
+    	<div style="color:aqua">NWT</div>
+    	<div style="color:goldenrod">YU</div>
+    	<div style="color:#FF3399">NU</div>
+    	<div style="color:brown">PEI</div>
+    	<div style="color:greenYellow">N/A</div>
+    	<label>Isolate Date<button onclick="collectionDateExplanation()">?</button></label>
     	<div id="collectionDateLabelBar"></div>
+    	<label>PFGE Group</label>
+    	<div style="color:yellowGreen">STHXAI.0002/STHBNI.0002<svg height="15" width="15"><circle cx="8" cy="4" r="4" stroke="yellowGreen" stroke-width="0px" fill="yellowGreen"/></svg></div>
+    	<div style="color:aqua">STHXAI.0002/STHBNI.0015<svg height="15" width="15"><circle cx="8" cy="4" r="4" stroke="aqua" stroke-width="0px" fill="aqua"/></svg></div>
+    	<div style="color:orange">STHXAI.0002/STHBNI.0018<svg height="15" width="15"><circle cx="8" cy="4" r="4" stroke="orange" stroke-width="0px" fill="orange"/></svg></div>
+    	<div style="color:grey">N/A<svg height="15" width="15"><circle cx="8" cy="4" r="4" stroke="grey" stroke-width="0px" fill="grey"/></svg></div>
     	<label>Zoom</label>
     	<div>Ctrl+ to zoom in.</div>
     	<div>Ctrl- to zoom out.</div>

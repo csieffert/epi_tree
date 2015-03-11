@@ -5,29 +5,11 @@ var maxCollectionDate;
 function loadNewick(evt){
 	var data;
     var file = evt.target.files[0];
-    console.log(file);
  	var reader = new FileReader();
  	reader.onload = function(){
  		buildTree(reader.result);
  	}
  	var text = reader.readAsText(file);
-}
-
-//function to move the DOM element requested
-function moveData(direction, amount, element){
-	if(direction=='left'){
-		var original = $().attr('left');
-		original = original + amount;
-		$(element).css('left', original);
-	}
-	else if(direction=='right'){
-		var original = $().attr('right');
-		original = original + amount;
-		$(element).css('right', original);
-	}
-	else{
-		alert("Unable to move the element.");
-	}
 }
 
 //handles the input of meta data to compliment the phylogenetic tree.
@@ -41,7 +23,6 @@ function loadMeta(evt) {
         $("#provinceLegend").show();
         //add the meta data to the side of the tree
         add_location_and_timeline_column(data);
-        //$("#collectionDate").css('left', '50%');
       }
     });
   } 
@@ -63,7 +44,7 @@ function buildTree(treeText){
 
 	d3.phylogram.build('#phylogram', newick, {
 		width: 3000,
-		height: 3000,
+		height: 4000,
 	});
 	alterInnerNodeText();
 }
@@ -73,9 +54,14 @@ function alterInnerNodeText(){
 	var innerNodes = document.getElementsByClassName("inner node");
 	var x =0;
 	while(innerNodes[x]){
+		//Center the total SNP text element for the inner nodes on the tree
+		innerNodes[x].childNodes[0].setAttribute("dx", innerNodes[x].childNodes[0].getAttribute("dx")-10);
+		if(innerNodes[x].childNodes[0].textContent === "0"){
+			innerNodes[x].childNodes[0].remove();
+		}
 		var node = innerNodes[x].childNodes[0];
 		$(node).attr('fill', '#000');
-		$(node).attr('font-size', '12px');
+		$(node).attr('font-size', '14px');
 		x++;
 	}
 }
@@ -88,7 +74,6 @@ function add_location_and_timeline_column(data){
 	minCollectionDate = findMinDate(data);
 	maxCollectionDate = findMaxDate(data);
 	var totalDays = daydiff(minCollectionDate, maxCollectionDate);
-	
 	while(leafNodes[x]){
 		var node = leafNodes[x].childNodes[1];
 		var nodeStrain = leafNodes[x].childNodes[1].textContent.split(" ")[0];
@@ -96,25 +81,31 @@ function add_location_and_timeline_column(data){
 		//check if the strain is present in the meta data file, and if so extract the values for its location and time
 		var y =0 ;
 		while(data[y]  && !strainFound){
-			if(("'"+data[y].NLEP+"'" == nodeStrain) | (data[y].NLEP == nodeStrain)){
+			var trimmedSubmitted = $.trim(data[y].SubmittedNumber);
+			if(("'"+data[y].NLEP+"'" == nodeStrain) || (data[y].NLEP == nodeStrain) || (trimmedSubmitted == nodeStrain)){
 				//create the bar graph that depicts sample location and date of collection:
 				var newdiv = document.createElement( "div" );
 				$(newdiv).css("class", "locationTimeBar");
 				$(newdiv).css("position", "absolute");
-				$(newdiv).css("backgroundColor", "#66FFFF");
+				if(data[y].Province){
+					$(newdiv).css("backgroundColor", determineProvince(data[y].Province));
+					$(leafNodes[x].childNodes[1]).attr('fill', determineProvince(data[y].Province));
+				}
 				$(newdiv).css("opacity", '0.5');
-				var top = $(leafNodes[x]).offset().top;
+				var top = $(leafNodes[x]).offset().top + 4;
 				$(newdiv).css('top', top);
 				$(newdiv).css('left', '50%');
-				$(newdiv).css('width', calculatePercentageTime(data[y].IsolatDate, minCollectionDate, totalDays));
-				$(newdiv).css('height', '12px');
+				if(data[y].IsolatDate){
+					$(newdiv).css('width', calculatePercentageTime(data[y].IsolatDate, minCollectionDate, totalDays));
+				}
+				$(newdiv).css('height', '8px');
 				$(newdiv).css('z-index', '4');
 				$(newdiv).append(" ");
 				$("#collectionDate").append(newdiv);
 				
-				//change the node circles to reflect the province fof origin
-				$(leafNodes[x].childNodes[0]).attr('fill', determineProvince(data[y].Province));
-				$(leafNodes[x].childNodes[0]).attr('stroke', determineProvince(data[y].Province));
+				//change the node circles to reflect the province of origin
+				$(leafNodes[x].childNodes[0]).attr('fill', determinePfgeGroup(data[y]));
+				$(leafNodes[x].childNodes[0]).attr('stroke', determinePfgeGroup(data[y]));
 				
 				strainFound = 1;
 			}
@@ -136,10 +127,12 @@ function add_location_and_timeline_column(data){
 			$(newdiv3).css('font-size', '8px');
 			$(newdiv3).append("N/A");
 			$("#collectionDate").append(newdiv3);
+			$(leafNodes[x].childNodes[0]).attr('fill', "grey");
+			$(leafNodes[x].childNodes[0]).attr('stroke', "grey");
 		}
 		
 		//add lines that will facilitate lining meta data up with phylo tree
-		if((x%2) == 0){
+		/*if((x%2) == 0){
 			//add div to indicate the origin province
 			var newdiv2 = document.createElement( "div" );
 			$(newdiv2).css("position", "absolute");
@@ -155,21 +148,12 @@ function add_location_and_timeline_column(data){
 			$(newdiv2).addClass('contrastLine');
 			$(newdiv2).append(" ");
 			$("#collectionDate").append(newdiv2);
-		}
+		}*/
 		
 		x++;
 	}
 }
 
-//switches graph from default branch length based depiction to a dendrogram layout
-function switchToDendrogram(){
-
-}
-
-//function will determine the percentage the date 
-function calculatePercentageDate(minDate, maxDate, queryDate){
-	
-}
 
 function determineProvince(province){
 	switch($.trim(province.toUpperCase())){
@@ -189,9 +173,9 @@ function determineProvince(province){
 			return 'purple';
 		case 'NB':
 			return 'darkolivegreen';
-		case 'PEI':
+		case 'PE':
 			return 'brown';
-		case 'NF':
+		case 'NL':
 			return 'pink';
 		case 'YT':
 			return 'goldenrod';
@@ -203,6 +187,24 @@ function determineProvince(province){
 			return 'red';
 		default:
 			break;
+	}
+}
+
+function determinePfgeGroup(isolate){
+	var outbreak = $.trim(isolate.Outbreak);
+	var xbal = $.trim(isolate.PFGEXbaI);
+	var blnl = $.trim(isolate.PFGEBlnI);
+	if(/*outbreak.contains('1404STH2') &&*/ xbal.contains('STHXAI.0002') && blnl.contains('STHBNI.0002')){
+		return 'yellowGreen';
+	}
+	else if(/*outbreak.contains('1408STH2') &&*/ xbal.contains('STHXAI.0002') && blnl.contains('STHBNI.0015')){
+		return 'aqua';
+	}
+	else if(/*outbreak.contains('1408STH2B18') &&*/ xbal.contains('STHXAI.0002') && blnl.contains('STHBNI.0018')){
+		return 'orange';
+	}
+	else{
+		return 'grey';
 	}
 }
 
